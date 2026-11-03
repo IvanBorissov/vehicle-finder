@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# vehicle-finder: local data and secrets
+*.db
+*.sqlite
+.env.*
+!.env.example
