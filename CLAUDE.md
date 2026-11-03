@@ -59,6 +59,8 @@ Run `python -m unittest` before every commit.
 
 ## Working with Ivan
 
+- `PROGRESS.md` is the shared log between Claude Desktop and Claude Code. Read it at the start of a session. At the end, add a short dated entry at the top of "Log" and update the status, open questions and next steps.
+
 - Ivan uses GitHub Desktop for git. Tell him what to click or run, step by step.
 - Explain what you changed and why in a few plain sentences.
 - Ask before big changes (new dependencies, new folders, a changed database schema).
