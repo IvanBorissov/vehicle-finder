@@ -222,3 +222,8 @@ __marimo__/
 # vehicle-finder: saved pages for debugging
 debug/
 data/
+# vehicle-finder: local data and secrets
+*.db
+*.sqlite
+.env.*
+!.env.example
