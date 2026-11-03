@@ -24,10 +24,15 @@ tests/                   offline tests on small hand-made pages
 ```
 
 Ground rules the code follows: a random 6–14 second pause between pages, at
-most 3 pages and 60 listings per search per run, listings seen before are
+most 8 pages and 60 new listings per search per run, listings seen before are
 updated instead of added again, and if a site shows a captcha or "access
 denied" the program stops for that site and tells you to use the site's
 e-mail alerts instead. It never tries to get around bot protection.
+
+Paging: each run starts at page 1 (newest ads). When it reaches ads it already
+has, it jumps to the page where the last run stopped and goes deeper, so the
+older ads get worked through over several days. Once a search has been read
+to the end, runs only check the first pages for new ads.
 
 ## Run it (first time)
 

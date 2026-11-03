@@ -6,7 +6,7 @@ JSON instead of scraping the visible text, which is far more reliable.
 """
 
 import json
-from urllib.parse import urlencode, urlparse, parse_qs, urlunparse
+from urllib.parse import urlencode
 
 from finder.listing import Listing, to_int
 from finder.sources.base import Source
@@ -35,10 +35,10 @@ class AutoScout24(Source):
         "(save search) and turn on e-mail alerts."
     )
 
-    def search_page_urls(self, profile, max_pages):
+    def search_url(self, profile):
         custom = profile.search_urls.get(self.name, "").strip()
         if custom:
-            return [_with_page(custom, n) for n in range(1, max_pages + 1)]
+            return custom
 
         make = MAKE_SLUGS.get(profile.make.lower(), profile.make.lower())
         model = profile.model.lower().replace(" ", "-")
@@ -59,8 +59,7 @@ class AutoScout24(Source):
             params["fuel"] = FUEL_CODES[profile.fuel]
         if profile.must_be_drivable:
             params["damaged_listing"] = "exclude"   # site's own damage filter
-        first = f"{BASE}/lst/{make}/{model}?{urlencode(params)}"
-        return [_with_page(first, n) for n in range(1, max_pages + 1)]
+        return f"{BASE}/lst/{make}/{model}?{urlencode(params)}"
 
     def parse_results(self, page):
         script = page.query_selector("script#__NEXT_DATA__")
@@ -102,10 +101,3 @@ class AutoScout24(Source):
             raw=item,
         )
 
-
-def _with_page(url, page_number):
-    """Return the same URL with page=<n> set."""
-    parts = urlparse(url)
-    query = parse_qs(parts.query)
-    query["page"] = [str(page_number)]
-    return urlunparse(parts._replace(query=urlencode(query, doseq=True)))

@@ -32,6 +32,17 @@ CREATE TABLE IF NOT EXISTS listings (
     raw_json            TEXT,
     PRIMARY KEY (profile, source, listing_id)
 );
+
+-- Where each search stopped last time, so the next run can go deeper.
+CREATE TABLE IF NOT EXISTS search_progress (
+    profile      TEXT NOT NULL,
+    source       TEXT NOT NULL,
+    search_url   TEXT,              -- page-1 URL; if it changes, we start over
+    resume_page  INTEGER DEFAULT 1, -- the next page to read when going deeper
+    complete     INTEGER DEFAULT 0, -- 1 = we have read every result page once
+    updated      TEXT,
+    PRIMARY KEY (profile, source)
+);
 """
 
 
@@ -92,3 +103,29 @@ class Storage:
             sql += " AND profile=?"
             args = (profile_name,)
         return self.db.execute(sql + " ORDER BY first_seen DESC", args).fetchall()
+
+    def get_progress(self, profile_name, source_name, search_url):
+        """Return (resume_page, complete) for this search.
+
+        A new search, or one whose URL changed (different criteria),
+        starts again from page 1 and is not complete.
+        """
+        row = self.db.execute(
+            "SELECT search_url, resume_page, complete FROM search_progress WHERE profile=? AND source=?",
+            (profile_name, source_name),
+        ).fetchone()
+        if row is None or row["search_url"] != search_url:
+            return 1, False
+        return row["resume_page"], bool(row["complete"])
+
+    def set_progress(self, profile_name, source_name, search_url, resume_page, complete):
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        self.db.execute(
+            """INSERT INTO search_progress (profile, source, search_url, resume_page, complete, updated)
+               VALUES (?,?,?,?,?,?)
+               ON CONFLICT (profile, source) DO UPDATE SET
+                   search_url=excluded.search_url, resume_page=excluded.resume_page,
+                   complete=excluded.complete, updated=excluded.updated""",
+            (profile_name, source_name, search_url, resume_page, int(complete), now),
+        )
+        self.db.commit()

@@ -13,7 +13,7 @@ from pathlib import Path
 class Settings:
     database: str = "data/vehicles.db"
     pause_seconds: tuple[float, float] = (6, 14)
-    max_pages_per_search: int = 3
+    max_pages_per_run: int = 8
     max_listings_per_run: int = 60
     show_browser: bool = False
     not_drivable_words: list[str] = field(default_factory=list)

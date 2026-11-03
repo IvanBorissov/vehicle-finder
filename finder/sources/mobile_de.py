@@ -16,7 +16,7 @@ mileage and first-registration date from the text of each card.
 """
 
 import re
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
+from urllib.parse import urljoin
 
 from finder.listing import Listing, to_int
 from finder.sources.base import Source
@@ -35,8 +35,9 @@ class MobileDe(Source):
         "On mobile.de, set up the search by hand, click 'Suche speichern' "
         "and turn on e-mail notifications for new results."
     )
+    page_param = "pageNumber"   # mobile.de calls the page number pageNumber
 
-    def search_page_urls(self, profile, max_pages):
+    def search_url(self, profile):
         custom = profile.search_urls.get(self.name, "").strip()
         if not custom:
             print(
@@ -45,8 +46,8 @@ class MobileDe(Source):
                 "    click search, copy the address bar and paste it into\n"
                 f"    config/profiles.toml under [profiles.search_urls] mobile_de for '{profile.name}'."
             )
-            return []
-        return [_with_page(custom, n) for n in range(1, max_pages + 1)]
+            return None
+        return custom
 
     def parse_results(self, page):
         listings = {}
@@ -86,10 +87,3 @@ class MobileDe(Source):
             raw={"card_text": text},
         )
 
-
-def _with_page(url, page_number):
-    """mobile.de uses pageNumber=<n> for paging."""
-    parts = urlparse(url)
-    query = parse_qs(parts.query)
-    query["pageNumber"] = [str(page_number)]
-    return urlunparse(parts._replace(query=urlencode(query, doseq=True)))

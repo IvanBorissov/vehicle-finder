@@ -12,10 +12,12 @@ database = "data/vehicles.db"
 # Human pace: wait a random number of seconds between page loads.
 pause_seconds = [6, 14]
 
-# Never load more than this many result pages per search, per site, per run.
-max_pages_per_search = 3
+# Safety cap: never load more than this many result pages per search,
+# per site, per run (the same pauses apply between every page).
+max_pages_per_run = 8
 
-# Stop a search after this many listings in one run.
+# Daily budget: stop a search after this many NEW listings in one run.
+# Listings we already have do not count.
 max_listings_per_run = 60
 
 # true = you can watch the browser window while it works.
