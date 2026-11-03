@@ -1,0 +1,81 @@
+# ---------------------------------------------------------------------------
+# Search profiles for vehicle-finder.
+#
+# Each [[profiles]] block is one search. Copy a block to add another search
+# (for example a different model or budget). Set enabled = false to pause one.
+# ---------------------------------------------------------------------------
+
+[settings]
+# Where the results are stored (a single SQLite file, ignored by git).
+database = "data/vehicles.db"
+
+# Human pace: wait a random number of seconds between page loads.
+pause_seconds = [6, 14]
+
+# Never load more than this many result pages per search, per site, per run.
+max_pages_per_search = 3
+
+# Stop a search after this many listings in one run.
+max_listings_per_run = 60
+
+# true = you can watch the browser window while it works.
+show_browser = false
+
+# A listing is marked "not drivable" if its title contains any of these
+# words (checked in lower case). Add or remove words freely.
+not_drivable_words = [
+  "motorschaden", "getriebeschaden", "defekt", "unfall", "totalschaden",
+  "bastler", "nicht fahrbereit", "nicht fahrtüchtig", "springt nicht an",
+  "ohne motor", "teileträger", "hagelschaden", "wasserschaden",
+  "brandschaden", "export", "engine damage", "damaged", "non runner",
+  "for parts", "moteur hs", "accidenté", "schade", "motorschade",
+]
+
+
+[[profiles]]
+name = "caddy-diesel-frankfurt"
+enabled = true
+
+make = "VW"
+model = "Caddy"
+fuel = "diesel"            # diesel, petrol, electric, hybrid, lpg
+max_price_eur = 10000
+
+# Search area: 350 km around Frankfurt am Main.
+center_zip = "60311"
+center_lat = 50.1109
+center_lon = 8.6821
+radius_km = 350
+# Countries to include (ISO codes). These are the ones within ~350 km.
+countries = ["DE", "FR", "BE", "NL", "LU", "AT"]
+
+# Skip damaged / non-running vehicles (site damage filter + keyword check).
+must_be_drivable = true
+
+# Which sites to search for this profile.
+sources = ["autoscout24", "mobile_de"]
+
+# Optional: paste a search URL from your own browser to use it exactly as is.
+# Leave empty ("") to let the program build the URL from the criteria above.
+[profiles.search_urls]
+autoscout24 = ""
+mobile_de = ""
+
+
+# Example of a second profile. Change enabled to true to use it.
+[[profiles]]
+name = "example-transporter"
+enabled = false
+make = "VW"
+model = "Transporter"
+fuel = "diesel"
+max_price_eur = 15000
+center_zip = "60311"
+center_lat = 50.1109
+center_lon = 8.6821
+radius_km = 200
+countries = ["DE"]
+must_be_drivable = true
+sources = ["autoscout24"]
+
+[profiles.search_urls]

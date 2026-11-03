@@ -219,6 +219,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# vehicle-finder: saved pages for debugging
+debug/
+data/
 # vehicle-finder: local data and secrets
 *.db
 *.sqlite
